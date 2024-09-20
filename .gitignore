@@ -1,0 +1,5 @@
+/venv
+.env
+./venv
+./src/venv
+/src/venv
