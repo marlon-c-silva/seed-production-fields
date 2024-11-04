@@ -44,6 +44,9 @@ if seed_production_fields_file:
 
     merged_df = pd.merge(filtered_df, hybrids_by_brand_df, on='hybrid', how='left')
     merged_df = merged_df[merged_df['cia'].isin(BRANDS_TO_FILTER)]
+    merged_df['hybrid'] = merged_df.apply(lambda row: row['hybrid'] if (row['apelido'] == None or row['apelido'] == "")   else row['apelido'], axis=1)
+    merged_df.loc[merged_df['apelido'].notnull(), 'hybrid'].apply(lambda row: row)
+
     merged_df["city_state"] = merged_df["municipio"] + "-" + merged_df["uf"]
     merged_df['city_state'] = merged_df['city_state'].astype(str).apply(unidecode)
 
@@ -51,10 +54,11 @@ if seed_production_fields_file:
     geo_lat_long_df = geo_lat_long_df.drop(columns=['city', 'state', 'country'])
 
     new_merged_df = pd.merge(merged_df, geo_lat_long_df, on='city_state', how='left')
-    new_merged_df = new_merged_df.drop(columns=['datacolheita'])
+    new_merged_df = new_merged_df.drop(columns=['datacolheita', 'apelido'])
     new_merged_df = new_merged_df.rename(columns={"municipio": "city", "uf": "state", "uf": "state", "marca": "brand", "Area": "area", "dataplantio": "harvest_date", "producaobruta": "gross_production", "producaoestimada": "estimated_production"})
 
     deleted_table = execute.delete_data_from_table(engine=engine, table_schema=DB_SCHEMA, table_name='SEED_PRODUCTION_FIELDS' )
 
     execute.send_data_to_sql(dataframe=new_merged_df, table_name=SEED_PRODUCTION_FIELDS_TABLE_NAME, connection_string=DB_CONNECTION_STRING, schema=DB_SCHEMA)
+
     new_merged_df.to_excel(f"C:/Users/7616594/Downloads/SEED_PRODUCTION_FIELDS_{execute.time_to_save()}.xlsx", index=False)

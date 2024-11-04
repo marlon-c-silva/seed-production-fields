@@ -33,9 +33,9 @@ table = Table(TABLE_NAME, metadata, autoload_with=engine, schema=DB_SCHEMA)
 table.delete()
 
 # Abre o arquivo .csv
-with open("C:/Users/7616594/Downloads/HYBRYDS_BY_BRAND_v3.csv", 'r') as f:
+with open("C:/Users/7616594/Downloads/HYBRIDS_BY_BRAND_v4.csv", 'r') as f:
     csv_reader = csv.reader(f, delimiter=';', skipinitialspace=True, dialect='excel')
-    headers = ["cia", "marca", "hybrid"]
+    headers = ["cia", "marca", "hybrid", "apelido"]
     for row in csv_reader:
         # Crie um novo objeto da tabela e adicione-o à sessão
         obj = {key: value for key, value in zip(headers, row)}
