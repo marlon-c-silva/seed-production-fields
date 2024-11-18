@@ -14,6 +14,7 @@ Código responsável pela execução do relatório.
  - Realiza o download do arquivo do site do Ministério da Agricultura e Pecuaria do Brasil, filtra apenas as Safras necessárias para a analise, apenas a espécie "Zea mays L." (Milho) e apenas as marcas "LPHT", "Corteva", "Bayer", "KWS", "LG Sementes", "Syngenta".
  -  Corrige a data de plantio, adicionado uma nova coluna ao dataframe chamada "correct_planting_date".
  - Realiza um Join com a base HYBRIDS_BY_BRAND.
+ - Realiza um merge entre a coluna hybrid e nickname mantendo hybrid + nickname caso a coluna nickname não esteja em branco, caso contrario, a coluna mantem apenas o hybrid.
  - Realiza um Join com a base GEO_LAT_LONG.
  - Dropa a coluna "datacolheita"
  - Renomeia as colunas do dataframe baseado no esquema abaixo:
