@@ -44,8 +44,12 @@ if seed_production_fields_file:
 
     merged_df = pd.merge(filtered_df, hybrids_by_brand_df, on='hybrid', how='left')
     merged_df = merged_df[merged_df['cia'].isin(BRANDS_TO_FILTER)]
-    merged_df['hybrid'] = merged_df.apply(lambda row: row['hybrid'] if (row['apelido'] == None or row['apelido'] == "")   else row['apelido'], axis=1)
-    merged_df.loc[merged_df['apelido'].notnull(), 'hybrid'].apply(lambda row: row)
+
+    # This step is not necessary anymore, but I'll keep it here for future reference explaining how to merge hybrid and apelido columns
+
+    # merged_df['hybrid'] = merged_df.apply(lambda row: row['hybrid'] if (row['apelido'] == None or row['apelido'] == "")   else row['apelido'], axis=1)
+    # merged_df.loc[merged_df['apelido'].notnull(), 'hybrid'].apply(lambda row: row)
+    merged_df["apelido"] = merged_df.apply(lambda x: x["hybrid"] + " - " + x["apelido"] if x["apelido"] is not None and x["apelido"] != "" else x["hybrid"], axis=1)
 
     merged_df["city_state"] = merged_df["municipio"] + "-" + merged_df["uf"]
     merged_df['city_state'] = merged_df['city_state'].astype(str).apply(unidecode)
@@ -54,8 +58,8 @@ if seed_production_fields_file:
     geo_lat_long_df = geo_lat_long_df.drop(columns=['city', 'state', 'country'])
 
     new_merged_df = pd.merge(merged_df, geo_lat_long_df, on='city_state', how='left')
-    new_merged_df = new_merged_df.drop(columns=['datacolheita', 'apelido'])
-    new_merged_df = new_merged_df.rename(columns={"municipio": "city", "uf": "state", "uf": "state", "marca": "brand", "Area": "area", "dataplantio": "harvest_date", "producaobruta": "gross_production", "producaoestimada": "estimated_production"})
+    new_merged_df = new_merged_df.drop(columns=['datacolheita'])
+    new_merged_df = new_merged_df.rename(columns={"municipio": "city", "uf": "state", "uf": "state", "marca": "brand", "Area": "area", "dataplantio": "harvest_date", "producaobruta": "gross_production", "producaoestimada": "estimated_production", "apelido": "nickname", "latitude": "lat", "longitude": "long"})
 
     deleted_table = execute.delete_data_from_table(engine=engine, table_schema=DB_SCHEMA, table_name='SEED_PRODUCTION_FIELDS' )
 
